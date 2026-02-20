@@ -27,13 +27,32 @@ The project is located at:
 
 ## 📋 What You Need To Do
 
-**Weekly (typically Monday mornings):**
+**Daily (typically mornings):**
 
-1. Export latest JIRA data as CSV
-2. Run the local dashboard app
-3. Upload the CSV file
-4. Push the data to cloud
-5. Verify it's updated online
+To upload latest data:
+
+1. **Export latest JIRA data as CSV:**  
+   Go to: https://manulife-gwam.atlassian.net/issues/?filter=37000  
+   Click "Export" → "Excel CSV (Current fields)"
+
+2. **Run the local dashboard app:**
+   ```bash
+   cd "/Users/kwokric/JIRA management"
+   streamlit run src/app.py
+   ```
+
+3. **Upload the CSV file:**
+   - Upload your exported CSV file
+   - Select "Data Snapshot Date" (today's date)
+   - Click "Process & Update"
+
+4. **Push the data to cloud:**
+   ```bash
+   ./push_data.sh
+   ```
+
+5. **Verify it's updated online:**  
+   Check: https://jiramanagement.streamlit.app
 
 **Time required:** ~5-10 minutes per update
 
@@ -63,14 +82,16 @@ cd "/Users/kwokric/JIRA management"
 
 # 2. Run the app
 streamlit run src/app.py
+```
 
-# 3. In the browser that opens:
-#    - Login with admin password
-#    - Upload your JIRA CSV file
-#    - Set the sprint dates
-#    - Click "Process & Update"
-#    - Wait for "✅ Sprint Data Saved"
+**3. In the browser that opens:**
+   - Login with admin password
+   - Upload your JIRA CSV file (exported from https://manulife-gwam.atlassian.net/issues/?filter=37000)
+   - Set the "Data Snapshot Date" (today's date)
+   - Click "Process & Update"
+   - Wait for "✅ Sprint Data Saved"
 
+```bash
 # 4. Close browser, then push to cloud:
 ./push_data.sh
 

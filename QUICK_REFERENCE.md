@@ -32,15 +32,22 @@ streamlit run src/app.py
 
 ## 🖥️ In Browser (After Step 2)
 
-1. **Login:** Enter `admin123` in "🔐 Admin Access"
-2. **Upload:** Click "Browse files" under "📤 Upload Sprint Data"
-3. **Dates:**
-   - End Date: Friday when sprint ends
-   - Snapshot: Today's date
-   - Start Date: Monday sprint started
-4. **Click:** "Process & Update" button
-5. **Wait for:** "✅ Sprint Data Saved"
-6. **Close browser** and return to terminal
+1. **Export JIRA Data First:**
+   - Go to: https://manulife-gwam.atlassian.net/issues/?filter=37000
+   - Click "Export" → "Excel CSV (Current fields)"
+
+2. **Login:** Enter `admin123` in "🔐 Admin Access"
+
+3. **Upload:** Click "Browse files" under "📤 Upload Sprint Data"
+
+4. **Set Date:**
+   - Data Snapshot Date: Today's date
+
+5. **Click:** "Process & Update" button
+
+6. **Wait for:** "✅ Sprint Data Saved"
+
+7. **Close browser** and return to terminal
 
 ---
 

@@ -66,9 +66,16 @@ A browser window will open automatically at `http://localhost:8501`
 
 ---
 
-### Step 4: Upload Your Data
+### Step 4: Export and Upload Your Data
 
-In the browser:
+**4a. Export JIRA Data:**
+
+1. Go to: https://manulife-gwam.atlassian.net/issues/?filter=37000
+2. Click "Export" button (top right)
+3. Select "Excel CSV (Current fields)"
+4. Save the CSV file to your computer
+
+**4b. Upload in Browser:**
 
 1. **Log in as Admin:**
    - Look for "🔐 Admin Access" in the left sidebar
@@ -78,11 +85,8 @@ In the browser:
 2. **Upload Sprint Data:**
    - Find "📤 Upload Sprint Data" section
    - Click "Browse files" or "Sprint JIRA Export (CSV)"
-   - Select your JIRA CSV file
-   - **Set dates:**
-     - Target Sprint End Date: (The Friday when sprint ends)
-     - Data Snapshot Date: (Today's date)
-     - Sprint Start Date: (The Monday sprint started)
+   - Select the CSV file you just exported
+   - **Set Data Snapshot Date:** (Today's date)
    - Click "Process & Update" button
    - Wait for "✅ Sprint Data Saved" message
 
@@ -250,24 +254,31 @@ git log --oneline -5
 
 ---
 
-## 📅 Weekly Workflow Example
+## 📅 Daily Workflow Example
 
-**Every Monday morning:**
+**Every morning (or as needed):**
 
 ```bash
-# 1. Navigate to project
+# 1. Export JIRA data
+# Go to: https://manulife-gwam.atlassian.net/issues/?filter=37000
+# Click "Export" → "Excel CSV (Current fields)"
+
+# 2. Navigate to project
 cd "/Users/kwokric/JIRA management"
 
-# 2. Start local app
+# 3. Start local app
 streamlit run src/app.py
 
-# 3. In browser: Upload new sprint data
-# (Follow Step 4 above)
+# 4. In browser: 
+#    - Login as admin
+#    - Upload the exported CSV
+#    - Set "Data Snapshot Date" to today
+#    - Click "Process & Update"
 
-# 4. Close browser, push to cloud
+# 5. Close browser, push to cloud
 ./push_data.sh
 
-# 5. Verify at https://jiramanagement.streamlit.app
+# 6. Verify at https://jiramanagement.streamlit.app
 
 # Done! Takes 5-10 minutes total.
 ```
