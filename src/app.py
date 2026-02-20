@@ -254,8 +254,9 @@ def main():
     upload_target_date = st.sidebar.date_input("Target Sprint End Date", value=default_upload_target, key="upload_target_date_input", help="The End Date of the Sprint you are uploading data for.")
     upload_target_str = upload_target_date.strftime('%Y-%m-%d')
     
-    # 3. Snapshot Date
-    snapshot_date = st.sidebar.date_input("Data Snapshot Date", value=datetime.date.today(), help="When was this data exported?")
+    # 3. Snapshot Date (highlighted in red)
+    st.sidebar.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Data Snapshot Date *</p>", unsafe_allow_html=True)
+    snapshot_date = st.sidebar.date_input("Date", value=datetime.date.today(), help="When was this data exported?", label_visibility="collapsed", key="snapshot_date_input")
     
     # 4. Optional: Start Date Override (Stored in session / metadata if possible)
     # We can infer it (End - 14 days) or let user set it. 
@@ -305,10 +306,11 @@ def main():
     if is_new_sprint and not confirm_new:
         can_upload = False
 
-    # --- PLAN DATA UPLOAD ---
-    st.sidebar.subheader("📤 Upload Plan Data")
-    uploaded_plan_file = st.sidebar.file_uploader("Plan Excel/CSV", type=['xlsx', 'xls', 'csv'])
-    plan_snapshot_date = st.sidebar.date_input("Plan Snapshot Date", value=datetime.date.today(), key="plan_snapshot")
+    # --- PLAN DATA UPLOAD (Collapsible) ---
+    with st.sidebar.expander("📤 Upload Plan Data", expanded=False):
+        uploaded_plan_file = st.file_uploader("Plan Excel/CSV", type=['xlsx', 'xls', 'csv'], key="plan_file_uploader")
+        st.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Plan Snapshot Date *</p>", unsafe_allow_html=True)
+        plan_snapshot_date = st.date_input("Date", value=datetime.date.today(), key="plan_snapshot", label_visibility="collapsed")
     
     # Initialize Alert Logger
     alert_logger = AlertLogger()
