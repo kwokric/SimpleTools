@@ -215,8 +215,12 @@ def main():
 
     # --- ADMIN ACCESS ---
     is_admin = False
-    # Use environment variable or Streamlit secrets for password
-    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD") or st.secrets.get("general", {}).get("ADMIN_PASSWORD", "admin123")
+    # Use environment variable or Streamlit secrets for password (with fallback)
+    try:
+        ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD") or st.secrets.get("general", {}).get("ADMIN_PASSWORD", "admin123")
+    except:
+        # Fallback if secrets.toml doesn't exist (local development)
+        ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
     
     with st.sidebar.expander("🔐 Admin Access", expanded=False):
         admin_password = st.text_input("Enter Admin Password", type="password")
