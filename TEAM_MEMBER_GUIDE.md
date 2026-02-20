@@ -4,6 +4,21 @@
 
 ---
 
+## ⚠️ Important: Localhost Upload Only
+
+**🔒 Security Notice:** For data integrity and security:
+- ✅ File uploads work **ONLY when running locally** (localhost)
+- ❌ File uploads are **disabled** on the cloud version (https://jiramanagement.streamlit.app)
+- 📊 The cloud dashboard is **read-only** - everyone can view but not upload
+
+**This means you MUST:**
+1. Run the app on your local machine using `streamlit run src/app.py`
+2. Upload files through your local browser (http://localhost:8501)
+3. Push changes to GitHub using `./push_data.sh`
+4. The cloud will automatically update within 1-2 minutes
+
+---
+
 ## 🎯 What You'll Do
 
 1. Upload new JIRA data to the local app

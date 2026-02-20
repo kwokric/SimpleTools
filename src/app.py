@@ -239,82 +239,95 @@ def main():
 
     st.sidebar.markdown("---")
 
+    # --- CHECK IF RUNNING LOCALLY OR ON CLOUD ---
+    # Detect if running on Streamlit Cloud by checking for deployment environment
+    is_local = not os.getenv("STREAMLIT_SHARING_MODE") and not os.getenv("STREAMLIT_RUNTIME_ENVIRONMENT")
+    
     # --- SPRINT DATA UPLOAD ---
     st.sidebar.subheader("📤 Upload Sprint Data")
     
-    # 1. File
-    uploaded_file = st.sidebar.file_uploader("Sprint JIRA Export (CSV)", type=['csv'])
-    
-    # 2. Target Sprint Definition (For Upload)
-    # Default to a sane value, but allow user to pick a new date to create a new sprint
-    default_upload_target = datetime.date.today()
-    # Try to grab the latest sprint from valid options as default
-    if st.session_state['sprint_options']:
-        try:
-             latest = st.session_state['sprint_options'][-1]
-             default_upload_target = pd.to_datetime(latest).date()
-        except: pass
-        
-    upload_target_date = st.sidebar.date_input("Target Sprint End Date", value=default_upload_target, key="upload_target_date_input", help="The End Date of the Sprint you are uploading data for.")
-    upload_target_str = upload_target_date.strftime('%Y-%m-%d')
-    
-    # 3. Snapshot Date (highlighted in red)
-    st.sidebar.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Data Snapshot Date *</p>", unsafe_allow_html=True)
-    snapshot_date = st.sidebar.date_input("Date", value=datetime.date.today(), help="When was this data exported?", label_visibility="collapsed", key="snapshot_date_input")
-    
-    # 4. Optional: Start Date Override (Stored in session / metadata if possible)
-    # We can infer it (End - 14 days) or let user set it. 
-    # Calculation: If End is Friday (4), Start should be Monday (0) -> End - 11.
-    # If End is Monday (0), Start should be Monday (0) -> End - 14.
-    # General formula for "Monday Start ~2 weeks ago":
-    # delta = (upload_target_date.weekday() - 0) % 7 + 7  -> This gives 1 week back. Add 7 for 2 weeks?
-    # Actually simple logic:
-    if upload_target_date.weekday() == 4: # Friday
-        def_start_delta = 11
+    if not is_local:
+        # Running on Streamlit Cloud - disable uploads
+        st.sidebar.warning("⚠️ File uploads are disabled on the cloud version.")
+        st.sidebar.info("📌 To upload data:\n1. Run the app locally\n2. Upload your files\n3. Run `./push_data.sh`\n4. Changes will appear here automatically!")
+        uploaded_file = None
+        upload_target_str = None
+        snapshot_date = None
     else:
-        def_start_delta = 14 # Fallback
+        # Running locally - allow uploads
+        # 1. File uploader
+        uploaded_file = st.sidebar.file_uploader("Sprint JIRA Export (CSV)", type=['csv'])
         
-    upload_start_date = st.sidebar.date_input("Sprint Start Date", value=upload_target_date - datetime.timedelta(days=def_start_delta), key="upload_start_date_input")
-
-    # --- VALIDATION LOGIC ---
-    validation_errors = []
-    
-    # Check 1: Friday
-    if upload_target_date.weekday() != 4: # 0=Mon, 4=Fri
-        validation_errors.append(f"❌ Target End Date ({upload_target_str}) is {upload_target_date.strftime('%A')}, should be Friday.")
-        
-    # Check 2: Monday
-    if upload_start_date.weekday() != 0:
-        validation_errors.append(f"❌ Sprint Start Date ({upload_start_date.strftime('%Y-%m-%d')}) is {upload_start_date.strftime('%A')}, should be Monday.")
-    
-    # Check 3: New Sprint Detection
-    is_new_sprint = upload_target_str not in st.session_state['sprint_options']
-    confirm_new = True
-    
-    if is_new_sprint:
-        st.sidebar.warning(f"🆕 New Sprint: {upload_target_str}")
-        confirm_new = st.sidebar.checkbox("✅ Confirm creating new sprint?", value=False)
-        if not confirm_new:
-             st.sidebar.caption("Please check the box to proceed.")
-             # We make this one blocking because it's a specific confirm action
-             # can_upload = False # Actually, let's just warn to avoid getting stuck
+        # 2. Target Sprint Definition (For Upload)
+        # Default to a sane value, but allow user to pick a new date to create a new sprint
+        default_upload_target = datetime.date.today()
+        # Try to grab the latest sprint from valid options as default
+        if st.session_state['sprint_options']:
+            try:
+                 latest = st.session_state['sprint_options'][-1]
+                 default_upload_target = pd.to_datetime(latest).date()
+            except: pass
             
-    # Display Validation Blocking Errors -> Changed to WARNINGS (User Override)
-    can_upload = True
-    if validation_errors:
-        for err in validation_errors:
-            st.sidebar.warning(err)
-            # st.sidebar.caption("⚠️ Proceed only if you are sure.")
-        # can_upload = False # Disabled blocking
+        upload_target_date = st.sidebar.date_input("Target Sprint End Date", value=default_upload_target, key="upload_target_date_input", help="The End Date of the Sprint you are uploading data for.")
+        upload_target_str = upload_target_date.strftime('%Y-%m-%d')
         
-    if is_new_sprint and not confirm_new:
-        can_upload = False
+        # 3. Snapshot Date (highlighted in red)
+        st.sidebar.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Data Snapshot Date *</p>", unsafe_allow_html=True)
+        snapshot_date = st.sidebar.date_input("Date", value=datetime.date.today(), help="When was this data exported?", label_visibility="collapsed", key="snapshot_date_input")
+        
+        # 4. Optional: Start Date Override (Stored in session / metadata if possible)
+        # We can infer it (End - 14 days) or let user set it. 
+        # Calculation: If End is Friday (4), Start should be Monday (0) -> End - 11.
+        # If End is Monday (0), Start should be Monday (0) -> End - 14.
+        # General formula for "Monday Start ~2 weeks ago":
+        # delta = (upload_target_date.weekday() - 0) % 7 + 7  -> This gives 1 week back. Add 7 for 2 weeks?
+        # Actually simple logic:
+        if upload_target_date.weekday() == 4: # Friday
+            def_start_delta = 11
+        else:
+            def_start_delta = 14 # Fallback
+            
+        upload_start_date = st.sidebar.date_input("Sprint Start Date", value=upload_target_date - datetime.timedelta(days=def_start_delta), key="upload_start_date_input")
 
-    # --- PLAN DATA UPLOAD (Collapsible) ---
-    with st.sidebar.expander("📤 Upload Plan Data", expanded=False):
-        uploaded_plan_file = st.file_uploader("Plan Excel/CSV", type=['xlsx', 'xls', 'csv'], key="plan_file_uploader")
-        st.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Plan Snapshot Date *</p>", unsafe_allow_html=True)
-        plan_snapshot_date = st.date_input("Date", value=datetime.date.today(), key="plan_snapshot", label_visibility="collapsed")
+        # --- VALIDATION LOGIC ---
+        validation_errors = []
+        
+        # Check 1: Friday
+        if upload_target_date.weekday() != 4: # 0=Mon, 4=Fri
+            validation_errors.append(f"❌ Target End Date ({upload_target_str}) is {upload_target_date.strftime('%A')}, should be Friday.")
+            
+        # Check 2: Monday
+        if upload_start_date.weekday() != 0:
+            validation_errors.append(f"❌ Sprint Start Date ({upload_start_date.strftime('%Y-%m-%d')}) is {upload_start_date.strftime('%A')}, should be Monday.")
+        
+        # Check 3: New Sprint Detection
+        is_new_sprint = upload_target_str not in st.session_state['sprint_options']
+        confirm_new = True
+        
+        if is_new_sprint:
+            st.sidebar.warning(f"🆕 New Sprint: {upload_target_str}")
+            confirm_new = st.sidebar.checkbox("✅ Confirm creating new sprint?", value=False)
+            if not confirm_new:
+                 st.sidebar.caption("Please check the box to proceed.")
+                 # We make this one blocking because it's a specific confirm action
+                 # can_upload = False # Actually, let's just warn to avoid getting stuck
+                
+        # Display Validation Blocking Errors -> Changed to WARNINGS (User Override)
+        can_upload = True
+        if validation_errors:
+            for err in validation_errors:
+                st.sidebar.warning(err)
+                # st.sidebar.caption("⚠️ Proceed only if you are sure.")
+            # can_upload = False # Disabled blocking
+            
+        if is_new_sprint and not confirm_new:
+            can_upload = False
+
+        # --- PLAN DATA UPLOAD (Collapsible) ---
+        with st.sidebar.expander("📤 Upload Plan Data", expanded=False):
+            uploaded_plan_file = st.file_uploader("Plan Excel/CSV", type=['xlsx', 'xls', 'csv'], key="plan_file_uploader")
+            st.markdown("<p style='color: red; font-weight: bold; margin-bottom: 0;'>📅 Plan Snapshot Date *</p>", unsafe_allow_html=True)
+            plan_snapshot_date = st.date_input("Date", value=datetime.date.today(), key="plan_snapshot", label_visibility="collapsed")
     
     # Initialize Alert Logger
     alert_logger = AlertLogger()
