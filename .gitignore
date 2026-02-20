@@ -28,8 +28,9 @@ env/
 
 # Data files - NOW INCLUDED FOR CLOUD SYNC
 # We want to track data files so Streamlit Cloud can access them
-# Only exclude logs
+# Only exclude logs and cache
 logs/*.log
+data/cache/
 
 # Keep all data files for cloud deployment
 # data/*.csv  <- COMMENTED OUT - we want to include these

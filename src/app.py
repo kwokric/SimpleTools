@@ -15,6 +15,7 @@ try:
     from jira_analyzer import JiraAnalyzer
     from alert_logger import AlertLogger
     from agents import BusinessAnalystAgent, ScrumMasterAgent, ProjectManagerAgent
+    from data_persistence import DataPersistence, auto_save_and_load_wrapper
 except ImportError:
     # If standard import fails, try adding current dir to path (though highly unlikely if running directly)
     sys.path.append(os.path.dirname(__file__))
@@ -22,6 +23,7 @@ except ImportError:
         from jira_analyzer import JiraAnalyzer
         from alert_logger import AlertLogger
         from agents import BusinessAnalystAgent, ScrumMasterAgent, ProjectManagerAgent
+        from data_persistence import DataPersistence, auto_save_and_load_wrapper
     except ImportError as e:
         st.error(f"Error importing modules: {e}")
         st.stop()
@@ -32,6 +34,9 @@ FIXED_SPRINTS = []
 def main():
     # 1. Critical: This must be the first Streamlit command
     st.set_page_config(page_title="JIRA Sprint Analyzer", layout="wide", page_icon="📊")
+    
+    # 2. Initialize auto-save/auto-load (loads saved data if available)
+    persistence = auto_save_and_load_wrapper()
     
     # --- Custom CSS / HTML Styling ---
     st.markdown("""
@@ -352,6 +357,9 @@ def main():
                     save_path = os.path.join(base_data_dir, f"sprint_{upload_target_str}.csv")
                     temp_analyzer.df.to_csv(save_path, index=False)
                     st.success(f"Sprint Data Saved: {save_path}")
+                    
+                    # AUTO-SAVE: Save to cache for auto-load on refresh
+                    persistence.save_sprint_data(temp_analyzer.df, uploaded_file.name)
 
                 except Exception as e:
                     st.error(f"Error: {e}")
@@ -426,6 +434,10 @@ def main():
                     plan_save_path = os.path.join(plan_data_dir, f"plan_{plan_snapshot_date}.csv")
                     new_plan_df.to_csv(plan_save_path, index=False)
                     st.success(f"Plan Saved (Merged with previous data): {plan_save_path}")
+                    
+                    # AUTO-SAVE: Save to cache for auto-load on refresh
+                    persistence.save_plan_data(new_plan_df, uploaded_plan_file.name)
+                    
                 except Exception as e:
                     st.error(f"Error: {e}")
             
