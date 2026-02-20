@@ -231,25 +231,48 @@ def auto_save_and_load_wrapper():
     
     # Auto-load on first run
     if 'data_auto_loaded' not in st.session_state:
-        # Try to load saved sprint data
-        saved_sprint = persistence.load_sprint_data()
-        if saved_sprint is not None:
-            st.session_state['sprint_data'] = saved_sprint
-            metadata = persistence.get_metadata("sprint")
-            
-            if metadata:
-                st.sidebar.success(f"✅ Auto-loaded: {metadata['filename']}")
-                st.sidebar.caption(f"📅 Uploaded: {metadata['last_upload_time'][:19]}")
-                st.sidebar.caption(f"📊 Rows: {metadata['row_count']}")
+        load_count = 0
+        
+        # Try to load all sprint files from permanent storage
+        try:
+            sprint_files = glob.glob(os.path.join(persistence.permanent_sprint_dir, "sprint_*.csv"))
+            if sprint_files:
+                # Initialize sprint_data dict if not exists
+                if 'sprint_data' not in st.session_state:
+                    st.session_state['sprint_data'] = {}
+                if 'sprint_options' not in st.session_state:
+                    st.session_state['sprint_options'] = []
+                
+                for sprint_file in sprint_files:
+                    # Extract date from filename: sprint_2026-02-06.csv -> 2026-02-06
+                    filename = os.path.basename(sprint_file)
+                    date_str = filename.replace('sprint_', '').replace('.csv', '')
+                    
+                    # Load the data
+                    df = pd.read_csv(sprint_file)
+                    st.session_state['sprint_data'][date_str] = df
+                    
+                    if date_str not in st.session_state['sprint_options']:
+                        st.session_state['sprint_options'].append(date_str)
+                    
+                    load_count += 1
+                
+                # Sort sprint options
+                st.session_state['sprint_options'].sort()
+                
+                if load_count > 0:
+                    st.sidebar.success(f"✅ Auto-loaded {load_count} sprint(s)")
+        except Exception as e:
+            st.sidebar.warning(f"Could not auto-load sprints: {e}")
         
         # Try to load saved plan data
-        saved_plan = persistence.load_plan_data()
-        if saved_plan is not None:
-            st.session_state['plan_data'] = saved_plan
-            metadata = persistence.get_metadata("plan")
-            
-            if metadata:
-                st.sidebar.info(f"📋 Plan loaded: {metadata['filename']}")
+        try:
+            saved_plan = persistence.load_plan_data()
+            if saved_plan is not None:
+                st.session_state['plan_data'] = saved_plan
+                st.sidebar.info(f"📋 Plan data auto-loaded")
+        except Exception as e:
+            st.sidebar.warning(f"Could not auto-load plan: {e}")
         
         st.session_state['data_auto_loaded'] = True
     
