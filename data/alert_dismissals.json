@@ -1,0 +1,51 @@
+{
+    "AWAMWRS-5770|Spent > SP": {
+        "issue_key": "AWAMWRS-5770",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-01-26T18:00:38.235715",
+        "dismissed_by": "user",
+        "remarks": "Carry Forward ticket, ack for long testing "
+    },
+    "AWAMWRS-7783|Spent > SP": {
+        "issue_key": "AWAMWRS-7783",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-01-26T18:00:43.387455",
+        "dismissed_by": "user",
+        "remarks": "Carry Forward ticket, ack for long testing "
+    },
+    "AWAMWRS-8919|Spent > SP": {
+        "issue_key": "AWAMWRS-8919",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-02-02T14:09:41.982771",
+        "dismissed_by": "user",
+        "remarks": "To monitor"
+    },
+    "AWAMWRS-8917|Spent > SP": {
+        "issue_key": "AWAMWRS-8917",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-02-20T11:10:59.324174",
+        "dismissed_by": "user",
+        "remarks": "acceptable"
+    },
+    "AWAMWRS-9173|Spent > SP": {
+        "issue_key": "AWAMWRS-9173",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-02-20T11:11:04.045470",
+        "dismissed_by": "user",
+        "remarks": "acceptable"
+    },
+    "AWAMWRS-9338|Spent > SP": {
+        "issue_key": "AWAMWRS-9338",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-02-20T11:11:08.740817",
+        "dismissed_by": "user",
+        "remarks": "acceptable"
+    },
+    "AWAMWRS-8193|Spent > SP": {
+        "issue_key": "AWAMWRS-8193",
+        "alert_type": "Spent > SP",
+        "dismissed_at": "2026-02-20T11:11:14.467471",
+        "dismissed_by": "user",
+        "remarks": "acceptable"
+    }
+}

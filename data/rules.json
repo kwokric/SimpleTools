@@ -1,0 +1,10 @@
+{
+    "risk_threshold_hours": 10,
+    "workload_limit_days": 10,
+    "critical_days_remaining": 1,
+    "categorization_rules": {
+        "backend": "Backend",
+        "frontend": "Frontend",
+        "api": "API"
+    }
+}

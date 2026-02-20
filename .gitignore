@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Data files - NOW INCLUDED FOR CLOUD SYNC
+# We want to track data files so Streamlit Cloud can access them
+# Only exclude logs
+logs/*.log
+
+# Keep all data files for cloud deployment
+# data/*.csv  <- COMMENTED OUT - we want to include these
+# data/*.json <- COMMENTED OUT - we want to include these
+# data/plans/*.csv <- COMMENTED OUT
+# data/sprints/*.csv <- COMMENTED OUT
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Secrets and credentials
+.env
+.streamlit/secrets.toml
+*.pem
+*.key
+credentials.json
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+Thumbs.db
