@@ -251,25 +251,7 @@ git log --oneline -5
 
 ---
 
-## 🆘 Emergency Contacts
-
-**If something goes wrong:**
-
-1. **Take a screenshot** of the error message
-2. **Note what step you were on**
-3. **Contact the admin** with:
-   - Screenshot
-   - Error message text
-   - What you were trying to do
-
-**Before contacting, try:**
-- Refreshing the browser
-- Restarting the local app (Ctrl+C, then run again)
-- Running `git status` to see what changed
-
----
-
-## 📅 Daily Workflow Example
+## 📅 Step by Step Example
 
 **Every morning (or as needed):**
 
@@ -350,7 +332,7 @@ After each upload, verify:
 
 ---
 
-## 📞 Support
+## Self Support
 
 **Repository:** https://github.com/kwokric/SimpleTools  
 **Cloud App:** https://jiramanagement.streamlit.app  
